@@ -16,6 +16,7 @@
             </div>
             <div class="nav-menu">
                 <a href="#basics" class="nav-link">基础知识</a>
+                <a href="#algorithms" class="nav-link">图算法</a>
                 <a href="#cypher" class="nav-link">Cypher 查询</a>
                 <a href="#modeling" class="nav-link">数据建模</a>
                 <a href="#features" class="nav-link">新特性</a>
@@ -65,6 +66,802 @@
                             <li>丰富的生态系统和工具支持</li>
                             <li>企业级安全和扩展性</li>
                         </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="algorithms" class="section section-alt">
+            <div class="container">
+                <h2 class="section-title">
+                    <i class="fas fa-share-alt"></i>
+                    常见图算法介绍
+                </h2>
+                <div class="section-content">
+                    <div class="tutorial-block">
+                        <h3>1. 中心性算法 (Centrality Algorithms)</h3>
+                        <p>中心性算法用于识别图中最重要的节点，常用于社交网络分析、关键人物识别等场景。</p>
+                        <div class="feature-grid">
+                            <div class="feature-item">
+                                <h4>PageRank</h4>
+                                <p>基于网页链接关系的算法，通过迭代计算节点的权重。Google创始人Page和Brin提出，用于网页排名。</p>
+                                <ul>
+                                    <li><strong>应用场景</strong>：网页排名、社交网络影响力度量、关键节点识别</li>
+                                    <li><strong>原理</strong>：一个节点的重要性取决于指向它的其他节点的数量和质量</li>
+                                </ul>
+                            </div>
+                            <div class="feature-item">
+                                <h4>Degree Centrality</h4>
+                                <p>度中心性是最简单的中心性指标，衡量节点的直接连接数量。</p>
+                                <ul>
+                                    <li><strong>应用场景</strong>：识别社交网络中的活跃用户、发现高度连接的设备</li>
+                                    <li><strong>特点</strong>：计算简单，但不能区分节点影响力的质量</li>
+                                </ul>
+                            </div>
+                            <div class="feature-item">
+                                <h4>Betweenness Centrality</h4>
+                                <p>介数中心性衡量节点在最短路径上出现的频率，反映节点的"桥梁"作用。</p>
+                                <ul>
+                                    <li><strong>应用场景</strong>：交通网络关键节点识别、信息传播瓶颈发现</li>
+                                    <li><strong>特点</strong>：能发现连接不同社群的桥接节点</li>
+                                </ul>
+                            </div>
+                            <div class="feature-item">
+                                <h4>Closeness Centrality</h4>
+                                <p>接近中心性衡量节点到其他所有节点的平均距离的倒数。</p>
+                                <ul>
+                                    <li><strong>应用场景</strong>：紧急设施选址、病毒传播源识别</li>
+                                    <li><strong>特点</strong>：值越大表示节点到其他节点的平均距离越短</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="code-block">
+                            <pre><code class="language-cypher">// PageRank 示例 - 识别最有影响力的节点
+CALL gds.pageRank.stream('myGraph')
+YIELD nodeId, score
+RETURN gds.util.asNode(nodeId).name AS name, score
+ORDER BY score DESC
+LIMIT 10
+
+// Degree Centrality 示例 - 找出连接数最多的节点
+CALL gds.degree.stream('myGraph')
+YIELD nodeId, score
+RETURN gds.util.asNode(nodeId).name AS name, score
+ORDER BY score DESC
+
+// Betweenness Centrality 示例 - 识别关键桥梁节点
+CALL gds.betweenness.stream('myGraph')
+YIELD nodeId, score
+RETURN gds.util.asNode(nodeId).name AS name, score
+ORDER BY score DESC
+LIMIT 10</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="tutorial-block">
+                        <h3>2. 社区发现算法 (Community Detection)</h3>
+                        <p>社区发现算法用于识别图中紧密连接的节点群组，是图分析的核心任务之一。</p>
+                        <div class="feature-grid">
+                            <div class="feature-item">
+                                <h4>Louvain 算法</h4>
+                                <p>基于模块度优化的启发式算法，是目前最流行的社区发现算法之一。</p>
+                                <ul>
+                                    <li><strong>应用场景</strong>：社交网络分析、生物信息学中的蛋白质网络分析</li>
+                                    <li><strong>特点</strong>：速度快、可处理大规模图、支持加权图</li>
+                                </ul>
+                            </div>
+                            <div class="feature-item">
+                                <h4>Label Propagation</h4>
+                                <p>标签传播算法是一种简单快速的社区发现方法。</p>
+                                <ul>
+                                    <li><strong>应用场景</strong>：大规模网络的快速社区划分</li>
+                                    <li><strong>特点</strong>：计算复杂度低，结果可能不稳定</li>
+                                </ul>
+                            </div>
+                            <div class="feature-item">
+                                <h4>Connected Components</h4>
+                                <p>连通分量算法找出图中相互连通的节点集合。</p>
+                                <ul>
+                                    <li><strong>应用场景</strong>：网络分区分析、孤立网络识别</li>
+                                    <li><strong>特点</strong>：分为强连通分量和弱连通分量</li>
+                                </ul>
+                            </div>
+                            <div class="feature-item">
+                                <h4>Triangle Counting</h4>
+                                <p>三角形计数算法计算图中三角形的数量及其分布。</p>
+                                <ul>
+                                    <li><strong>应用场景</strong>：网络密度分析、社区紧密程度评估</li>
+                                    <li><strong>特点</strong>：三角形密集的区域通常代表紧密的社区</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="code-block">
+                            <pre><code class="language-cypher">// Louvain 社区发现
+CALL gds.louvain.stream('myGraph')
+YIELD nodeId, communityId
+RETURN communityId, 
+       count(*) AS community_size,
+       collect(gds.util.asNode(nodeId).name) AS members
+ORDER BY community_size DESC
+
+// 弱连通分量分析
+CALL gds.wcc.stream('myGraph')
+YIELD nodeId, componentId
+RETURN componentId, count(*) AS size
+ORDER BY size DESC
+
+// 三角形计数（带过滤）
+CALL gds.triangleCount.stream('myGraph')
+YIELD nodeId, triangleCount
+RETURN gds.util.asNode(nodeId).name AS name, triangleCount
+ORDER BY triangleCount DESC
+LIMIT 10</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="tutorial-block">
+                        <h3>3. 路径查找算法 (Path Finding)</h3>
+                        <p>路径查找算法用于计算图中节点之间的最短路径或最优路径。</p>
+                        <div class="feature-grid">
+                            <div class="feature-item">
+                                <h4>Shortest Path</h4>
+                                <p>最短路径算法计算两个节点之间的最短路径，支持加权图。</p>
+                                <ul>
+                                    <li><strong>Dijkstra算法</strong>：适合非负权重的最短路径</li>
+                                    <li><strong>A*算法</strong>：启发式搜索，效率更高</li>
+                                    <li><strong>应用</strong>：导航系统、网络路由、资源分配</li>
+                                </ul>
+                            </div>
+                            <div class="feature-item">
+                                <h4>All Shortest Paths</h4>
+                                <p>计算所有节点对之间的最短路径。</p>
+                                <ul>
+                                    <li><strong>应用</strong>：网络可靠性分析、系统容错设计</li>
+                                    <li><strong>特点</strong>：计算复杂度较高，适合中小规模图</li>
+                                </ul>
+                            </div>
+                            <div class="feature-item">
+                                <h4>Minimum Spanning Tree</h4>
+                                <p>最小生成树算法连接所有节点且总权重最小。</p>
+                                <ul>
+                                    <li><strong>应用</strong>：网络设计、聚类分析、电路设计</li>
+                                    <li><strong>常见算法</strong>：Prim算法、Kruskal算法</li>
+                                </ul>
+                            </div>
+                            <div class="feature-item">
+                                <h4>Random Walk</h4>
+                                <p>随机游走算法模拟随机漫步过程，用于采样和嵌入。</p>
+                                <ul>
+                                    <li><strong>应用</strong>：节点嵌入采样、推荐系统、社区检测</li>
+                                    <li><strong>特点</strong>：为Node2Vec等嵌入方法提供基础</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="code-block">
+                            <pre><code class="language-cypher">// 最短路径 (Dijkstra)
+MATCH (start:Person {name: '张三'}), (end:Person {name: '李四'})
+CALL gds.shortestPath.dijkstra.stream('myGraph', {
+    sourceNode: start,
+    targetNode: end,
+    relationshipWeightProperty: 'distance'
+})
+YIELD nodeIds, path
+RETURN [nodeId IN nodeIds | gds.util.asNode(nodeId).name] AS path
+
+// A* 算法 (带启发式)
+MATCH (start:Location {name: 'A'}), (end:Location {name: 'Z'})
+CALL gds.shortestPath.astar.stream('myGraph', {
+    sourceNode: start,
+    targetNode: end,
+    relationshipWeightProperty: 'distance',
+    heuristicProperty: 'heuristic'
+})
+YIELD nodeIds, costs
+RETURN [nodeId IN nodeIds | gds.util.asNode(nodeId).name] AS path
+
+// 所有节点对最短路径
+CALL gds.allShortestPaths.stream('myGraph', {
+    relationshipWeightProperty: 'distance'
+})
+YIELD sourceNodeName, targetNodeName, distance
+WHERE sourceNodeName < targetNodeName
+RETURN sourceNodeName, targetNodeName, distance
+ORDER BY distance DESC
+LIMIT 10</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="tutorial-block">
+                        <h3>4. 链接预测算法 (Link Prediction)</h3>
+                        <p>链接预测算法用于预测图中未来可能形成的关系，广泛应用于推荐系统和欺诈检测。</p>
+                        <div class="feature-grid">
+                            <div class="feature-item">
+                                <h4>Common Neighbors</h4>
+                                <p>共同邻居算法：两个节点的共同邻居越多，它们越可能相连。</p>
+                                <ul>
+                                    <li><strong>公式</strong>：|N(u) ∩ N(v)|</li>
+                                    <li><strong>应用</strong>：好友推荐、商品推荐</li>
+                                </ul>
+                            </div>
+                            <div class="feature-item">
+                                <h4>Adamic-Adar Index</h4>
+                                <p>AA指数：考虑邻居的稀有程度，稀有邻居贡献更大。</p>
+                                <ul>
+                                    <li><strong>公式</strong>：Σ z∈N(u)∩N(v) 1/log(deg(z))</li>
+                                    <li><strong>应用</strong>：社交网络链接预测</li>
+                                </ul>
+                            </div>
+                            <div class="feature-item">
+                                <h4>Resource Allocation</h4>
+                                <p>资源分配指数：模拟资源从节点u通过共同邻居传递到节点v的过程。</p>
+                                <ul>
+                                    <li><strong>公式</strong>：Σ z∈N(u)∩N(v) 1/deg(z)</li>
+                                    <li><strong>应用</strong>：复杂网络链接预测</li>
+                                </ul>
+                            </div>
+                            <div class="feature-item">
+                                <h4>Preferential Attachment</h4>
+                                <p>优先连接：节点的度越高，越容易获得新连接。</p>
+                                <ul>
+                                    <li><strong>公式</strong>：deg(u) × deg(v)</li>
+                                    <li><strong>应用</strong>：新节点接入预测、网络演化</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="code-block">
+                            <pre><code class="language-cypher">// Common Neighbors 链接预测
+MATCH (p1:Person {name: '张三'})
+CALL gds.linkPrediction.commonNeighbors.stream('myGraph', {
+    sourceNode: p1
+})
+YIELD node2, score
+RETURN node2.name AS candidate, score
+ORDER BY score DESC
+LIMIT 10
+
+// Adamic-Adar 链接预测
+MATCH (p1:Person {name: '张三'})
+CALL gds.linkPrediction.adamicAdar.stream('myGraph', {
+    sourceNode: p1
+})
+YIELD node2, score
+RETURN node2.name AS candidate, score
+ORDER BY score DESC
+LIMIT 10
+
+// 资源分配指数
+MATCH (p1:Person {name: '张三'})
+CALL gds.linkPrediction.resourceAllocation.stream('myGraph', {
+    sourceNode: p1
+})
+YIELD node2, score
+RETURN node2.name AS candidate, score
+ORDER BY score DESC
+LIMIT 10
+
+// 优先连接
+MATCH (p1:Person {name: '张三'})
+CALL gds.linkPrediction.preferentialAttachment.stream('myGraph', {
+    sourceNode: p1
+})
+YIELD node2, score
+RETURN node2.name AS candidate, score
+ORDER BY score DESC
+LIMIT 10</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="tutorial-block">
+                        <h3>5. 节点嵌入算法 (Node Embedding)</h3>
+                        <p>节点嵌入算法将图中的节点映射到低维向量空间，便于机器学习模型处理。</p>
+                        <div class="feature-grid">
+                            <div class="feature-item">
+                                <h4>Node2Vec</h4>
+                                <p>结合深度优先和广度优先游走的节点嵌入方法。</p>
+                                <ul>
+                                    <li><strong>参数</strong>：p (return), q (in-out)</li>
+                                    <li><strong>应用</strong>：节点分类、链接预测、聚类</li>
+                                </ul>
+                            </div>
+                            <div class="feature-item">
+                                <h4>FastRP (Fast Random Projection)</h4>
+                                <p>基于随机投影的快速节点嵌入算法。</p>
+                                <ul>
+                                    <li><strong>特点</strong>：速度快、可扩展性好</li>
+                                    <li><strong>应用</strong>：大规模图嵌入、特征工程</li>
+                                </ul>
+                            </div>
+                            <div class="feature-item">
+                                <h4>GraphSAGE</h4>
+                                <p>基于图神经网络的归纳式节点嵌入方法。</p>
+                                <ul>
+                                    <li><strong>特点</strong>：支持未见过的节点泛化</li>
+                                    <li><strong>应用</strong>：动态图、归纳学习</li>
+                                </ul>
+                            </div>
+                            <div class="feature-item">
+                                <h4>HashGNN</h4>
+                                <p>基于哈希的图神经网络嵌入方法。</p>
+                                <ul>
+                                    <li><strong>特点</strong>：高效、可解释性强</li>
+                                    <li><strong>应用</strong>：快速嵌入、大规模图</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="code-block">
+                            <pre><code class="language-cypher">// Node2Vec 嵌入
+CALL gds.node2vec.stream('myGraph', {
+    embeddingDimension: 128,
+    walkLength: 80,
+    walksPerNode: 10,
+    returnFactor: 1.0,
+    inOutFactor: 1.0
+})
+YIELD nodeId, embedding
+RETURN gds.util.asNode(nodeId).name AS name, embedding[0..5] AS preview
+
+// FastRP 嵌入
+CALL gds.fastRP.write('myGraph', {
+    embeddingDimension: 256,
+    relationshipWeightProperty: 'weight',
+    writeProperty: 'embedding'
+})
+
+// GraphSAGE 训练
+CALL gds.graphSage.train('myGraph', {
+    modelName: 'myModel',
+    featureProperties: ['age', 'income'],
+    embeddingDimension: 64,
+    aggregator: 'mean',
+    epochs: 10
+})
+
+// 使用训练好的模型预测
+CALL gds.graphSage.predict.stream('myGraph', {
+    modelName: 'myModel'
+})
+YIELD nodeId, predictedLabel
+RETURN gds.util.asNode(nodeId).name AS name, predictedLabel</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="tutorial-block">
+                        <h3>6. 相似度算法 (Similarity Algorithms)</h3>
+                        <p>相似度算法用于衡量节点或图之间的相似程度。</p>
+                        <div class="feature-grid">
+                            <div class="feature-item">
+                                <h4>Jaccard Similarity</h4>
+                                <p>Jaccard相似度：两个集合的交集与并集的比值。</p>
+                                <ul>
+                                    <li><strong>公式</strong>：|A ∩ B| / |A ∪ B|</li>
+                                    <li><strong>应用</strong>：用户行为相似度、文本相似度</li>
+                                </ul>
+                            </div>
+                            <div class="feature-item">
+                                <h4>Cosine Similarity</h4>
+                                <p>余弦相似度：向量夹角的余弦值。</p>
+                                <ul>
+                                    <li><strong>公式</strong>：A·B / (|A|×|B|)</li>
+                                    <li><strong>应用</strong>：基于嵌入向量的相似度计算</li>
+                                </ul>
+                            </div>
+                            <div class="feature-item">
+                                <h4>Euclidean Distance</h4>
+                                <p>欧几里得距离：两点之间的直线距离。</p>
+                                <ul>
+                                    <li><strong>公式</strong>：√Σ(Ai-Bi)²</li>
+                                    <li><strong>应用</strong>：聚类分析、异常检测</li>
+                                </ul>
+                            </div>
+                            <div class="feature-item">
+                                <h4>Pearson Correlation</h4>
+                                <p>皮尔逊相关系数：衡量两个向量的线性相关程度。</p>
+                                <ul>
+                                    <li><strong>范围</strong>：-1到1</li>
+                                    <li><strong>应用</strong>：特征相似度、行为分析</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="code-block">
+                            <pre><code class="language-cypher">// Jaccard 相似度
+MATCH (p1:Person {name: '张三'})
+CALL gds.nodeSimilarity.jaccard.stream('myGraph', {
+    sourceNode: p1
+})
+YIELD node2, similarity
+RETURN node2.name AS similar_person, similarity
+ORDER BY similarity DESC
+LIMIT 10
+
+// Cosine 相似度 (基于嵌入向量)
+MATCH (p1:Person {name: '张三'}), (p2:Person)
+WHERE p1 <> p2
+WITH p1, p2, gds.similarity.cosine(p1.embedding, p2.embedding) AS similarity
+RETURN p2.name, similarity
+ORDER BY similarity DESC
+LIMIT 10
+
+// Euclidean 距离
+MATCH (p1:Person {name: '张三'}), (p2:Person)
+WHERE p1 <> p2
+WITH p1, p2, gds.similarity.euclideanDistance(p1.embedding, p2.embedding) AS distance
+RETURN p2.name, distance
+ORDER BY distance ASC
+LIMIT 10
+
+// 余弦相似度 (节点属性)
+MATCH (p1:Person {name: '张三'}), (p2:Person)
+WHERE p1 <> p2
+WITH p1, p2, gds.similarity.cosine([p1.age, p1.income], [p2.age, p2.income]) AS similarity
+RETURN p2.name, similarity
+ORDER BY similarity DESC
+LIMIT 10</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="tutorial-block">
+                        <h3>7. 节点分类算法 (Node Classification)</h3>
+                        <p>节点分类算法用于预测节点的标签或类别。</p>
+                        <div class="feature-grid">
+                            <div class="feature-item">
+                                <h4>GraphSAGE Classification</h4>
+                                <p>基于GraphSAGE的归纳式节点分类。</p>
+                                <ul>
+                                    <li><strong>输入</strong>：节点特征、图结构</li>
+                                    <li><strong>输出</strong>：节点类别标签</li>
+                                </ul>
+                            </div>
+                            <div class="feature-item">
+                                <h4>Node2Vec + 传统ML</h4>
+                                <p>先用Node2Vec生成嵌入，再用传统机器学习分类。</p>
+                                <ul>
+                                    <li><strong>优点</strong>：灵活、可解释性强</li>
+                                    <li><strong>缺点</strong>：需要标注数据</li>
+                                </ul>
+                            </div>
+                            <div class="feature-item">
+                                <h4>半监督学习</h4>
+                                <p>利用少量标注数据和大量未标注数据进行学习。</p>
+                                <ul>
+                                    <li><strong>应用</strong>：欺诈检测、异常识别</li>
+                                    <li><strong>优点</strong>：减少标注成本</li>
+                                </ul>
+                            </div>
+                            <div class="feature-item">
+                                <h4>多标签分类</h4>
+                                <p>一个节点可以同时属于多个类别。</p>
+                                <ul>
+                                    <li><strong>应用</strong>：用户兴趣分类、文档标注</li>
+                                    <li><strong>特点</strong>：更贴近真实场景</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="code-block">
+                            <pre><code class="language-cypher">// GraphSAGE 节点分类训练
+CALL gds.graphSage.train('myGraph', {
+    modelName: 'nodeClassifier',
+    featureProperties: ['age', 'income', 'activityScore'],
+    labelProperty: 'category',
+    embeddingDimension: 128,
+    aggregator: 'mean',
+    epochs: 20,
+    batchSize: 64,
+    learningRate: 0.01
+})
+
+// 使用模型进行预测
+CALL gds.graphSage.predict.stream('myGraph', {
+    modelName: 'nodeClassifier'
+})
+YIELD nodeId, predictedCategory, probability
+RETURN gds.util.asNode(nodeId).name AS name, 
+       predictedCategory AS prediction,
+       probability
+ORDER BY probability DESC
+
+// 使用投影图进行分类（避免污染原图）
+CALL gds.graph.project(
+    'projectionGraph',
+    ['Person'],
+    ['FRIEND_OF', 'WORKS_WITH'],
+    {
+        nodeProperties: ['age', 'income', 'activityScore'],
+        relationshipProperties: {weight: 'weight'}
+    }
+)
+
+CALL gds.graphSage.train('projectionGraph', {
+    modelName: 'classifierOnProjection',
+    featureProperties: ['age', 'income', 'activityScore'],
+    labelProperty: 'category',
+    epochs: 10
+})
+
+CALL gds.graph.drop('projectionGraph')</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="tutorial-block">
+                        <h3>8. 图神经网络 (Graph Neural Networks)</h3>
+                        <p>图神经网络是深度学习在图结构数据上的扩展，能够学习复杂的图模式。</p>
+                        <div class="feature-grid">
+                            <div class="feature-item">
+                                <h4>GCN (Graph Convolutional Network)</h4>
+                                <p>图卷积网络，通过卷积操作聚合邻居信息。</p>
+                                <ul>
+                                    <li><strong>层数</strong>：通常2-3层</li>
+                                    <li><strong>应用</strong>：节点分类、图分类</li>
+                                </ul>
+                            </div>
+                            <div class="feature-item">
+                                <h4>GAT (Graph Attention Network)</h4>
+                                <p>图注意力网络，使用注意力机制聚合邻居信息。</p>
+                                <ul>
+                                    <li><strong>特点</strong>：可学习邻居权重</li>
+                                    <li><strong>应用</strong>：推荐系统、分子性质预测</li>
+                                </ul>
+                            </div>
+                            <div class="feature-item">
+                                <h4>GraphSAGE</h4>
+                                <p>归纳式图神经网络，支持未见节点的泛化。</p>
+                                <ul>
+                                    <li><strong>特点</strong>：可扩展、支持采样</li>
+                                    <li><strong>应用</strong>：动态图、大规模图</li>
+                                </ul>
+                            </div>
+                            <div class="feature-item">
+                                <h4>链接预测 GNN</h4>
+                                <p>专门用于链接预测的图神经网络模型。</p>
+                                <ul>
+                                    <li><strong>应用</strong>：社交网络好友推荐、知识图谱补全</li>
+                                    <li><strong>特点</strong>：端到端学习</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="code-block">
+                            <pre><code class="language-cypher">// GCN 用于节点分类
+CALL gds.alpha.gcn.train('myGraph', {
+    modelName: 'gcnClassifier',
+    featureProperties: ['feature1', 'feature2', 'feature3'],
+    labelProperty: 'label',
+    hiddenDim: 64,
+    epochs: 100,
+    learningRate: 0.01
+})
+
+// GAT 节点分类
+CALL gds.alpha.gat.train('myGraph', {
+    modelName: 'gatClassifier',
+    featureProperties: ['feature1', 'feature2'],
+    labelProperty: 'label',
+    hiddenDim: 64,
+    heads: 8,
+    epochs: 100
+})
+
+// GNN 链接预测
+CALL gds.alpha.ml.linkPrediction.train('myGraph', {
+    modelName: 'gnnLinkPredictor',
+    featureProperties: ['embedding'],
+    hiddenDim: 32,
+    epochs: 50
+})
+
+// 使用 GNN 模型预测新链接
+CALL gds.alpha.ml.linkPrediction.predict('myGraph', {
+    modelName: 'gnnLinkPredictor',
+    topK: 10
+})
+YIELD node1, node2, probability
+RETURN node1.name, node2.name, probability
+ORDER BY probability DESC</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="tutorial-block">
+                        <h3>9. 实体解析算法 (Entity Resolution)</h3>
+                        <p>实体解析用于识别不同数据源中代表同一实体的节点。</p>
+                        <div class="feature-grid">
+                            <div class="feature-item">
+                                <h4>相似性连接</h4>
+                                <p>基于属性相似度识别可能匹配的实体对。</p>
+                                <ul>
+                                    <li><strong>应用</strong>：数据去重、记录链接</li>
+                                    <li><strong>方法</strong>：Jaro-Winkler、编辑距离</li>
+                                </ul>
+                            </div>
+                            <div class="feature-item">
+                                <h4>基于图的匹配</h4>
+                                <p>利用节点之间的关系进行实体匹配。</p>
+                                <ul>
+                                    <li><strong>应用</strong>：跨数据库实体对齐</li>
+                                    <li><strong>优点</strong>：考虑上下文信息</li>
+                                </ul>
+                            </div>
+                            <div class="feature-item">
+                                <h4>传递闭包</h4>
+                                <p>通过传递性推断实体的等价关系。</p>
+                                <ul>
+                                    <li><strong>应用</strong>：实体合并、社区发现</li>
+                                    <li><strong>注意</strong>：避免错误传递</li>
+                                </ul>
+                            </div>
+                            <div class="feature-item">
+                                <h4>冲突检测</h4>
+                                <p>检测合并后数据的属性冲突。</p>
+                                <ul>
+                                    <li><strong>应用</strong>：数据清洗、质量检查</li>
+                                    <li><strong>方法</strong>：投票、最值选择</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="code-block">
+                            <pre><code class="language-cypher">// 相似性连接示例
+MATCH (p1:Person), (p2:Person)
+WHERE p1 <> p2 
+  AND p1.lastName = p2.lastName
+  AND size(p1.firstName) > 3
+  AND size(p2.firstName) > 3
+WITH p1, p2,
+     gds.similarity.jaccard(p1.alias, p2.alias) AS nameSimilarity
+WHERE nameSimilarity > 0.7
+RETURN p1.name AS entity1, p2.name AS entity2, nameSimilarity
+ORDER BY nameSimilarity DESC
+
+// 基于图的实体解析
+MATCH (p1:Person {id: '12345'})
+MATCH (p2:Person {id: '67890'})
+// 检查是否有共同的朋友
+WITH p1, p2,
+     [(p1)-[:FRIEND_OF]->(f)-[:FRIEND_OF]->(p2) | f] AS mutualFriends
+WHERE size(mutualFriends) > 2
+RETURN p1, p2, mutualFriends
+
+// 实体合并（创建等价关系）
+MATCH (p1:Person {source: 'systemA'}), (p2:Person {source: 'systemB'})
+WHERE p1.name = p2.name AND p1.birthDate = p2.birthDate
+MERGE (p1)-[:SAME_AS]->(p2)
+
+// 查询合并后的实体
+MATCH (p:Person)-[:SAME_AS]->(other:Person)
+RETURN collect(DISTINCT p.id) AS merged_ids, p.name AS name</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="tutorial-block">
+                        <h3>10. 时序图算法 (Temporal Graph Algorithms)</h3>
+                        <p>时序图算法专门处理带有时间信息的图结构。</p>
+                        <div class="feature-grid">
+                            <div class="feature-item">
+                                <h4>时序最短路径</h4>
+                                <p>考虑时间约束的最短路径计算。</p>
+                                <ul>
+                                    <li><strong>应用</strong>：航班预订、时间敏感路由</li>
+                                    <li><strong>约束</strong>：必须按时间顺序到达</li>
+                                </ul>
+                            </div>
+                            <div class="feature-item">
+                                <h4>时序社区发现</h4>
+                                <p>追踪社区随时间的演变。</p>
+                                <ul>
+                                    <li><strong>应用</strong>：社交动态分析、趋势发现</li>
+                                    <li><strong>方法</strong>：快照比较、演化追踪</li>
+                                </ul>
+                            </div>
+                            <div class="feature-item">
+                                <h4>时序链接预测</h4>
+                                <p>预测未来可能出现的关系。</p>
+                                <ul>
+                                    <li><strong>应用</strong>：用户行为预测、趋势分析</li>
+                                    <li><strong>特点</strong>：考虑时间衰减</li>
+                                </ul>
+                            </div>
+                            <div class="feature-item">
+                                <h4>影响传播</h4>
+                                <p>追踪信息或影响在网络中的传播。</p>
+                                <ul>
+                                    <li><strong>应用</strong>：病毒传播建模、营销效果分析</li>
+                                    <li><strong>方法</strong>：SIR模型、信息级联</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="code-block">
+                            <pre><code class="language-cypher">// 时序最短路径（考虑时间窗口）
+MATCH (start:Event {type: 'start'}),
+      (end:Event {type: 'end'})
+CALL gds.shortestPath.dijkstra.stream('temporalGraph', {
+    sourceNode: start,
+    targetNode: end,
+    relationshipWeightProperty: 'duration',
+    startTimeProperty: 'startTime',
+    endTimeProperty: 'endTime'
+})
+YIELD nodeIds, path, cost
+RETURN [nodeId IN nodeIds | gds.util.asNode(nodeId).eventTime] AS timeline
+
+// 时序社区发现 - 追踪社区演变
+MATCH (n:Person)
+WITH gds.util.asNode(n).community AS community, n.eventTime AS time
+RETURN community, 
+       collect(DISTINCT time) AS evolution,
+       count(*) AS size
+ORDER BY size DESC
+
+// 基于时间的链接预测（越近的关系权重越高）
+MATCH (p1:Person {name: '张三'})-[r:FRIENDS_WITH]->(p2:Person)
+WITH p1, p2, 
+     r.since AS established,
+     datetime().epochSeconds - established.epochSeconds AS ageInSeconds,
+     1.0 / (1 / 86400) AS recencyWeight  + ageInSeconds // 每天衰减
+RETURN p2.name AS friend, recencyWeight
+ORDER BY recencyWeight DESC
+LIMIT 10
+
+// 时序PageRank（考虑时间衰减）
+MATCH (n)
+WITH gds.pageRank.stream('temporalGraph', {
+    nodeWeightProperty: 'importance',
+    temporalProperty: 'timestamp',
+    decayFactor: 0.95
+}) YIELD nodeId, score
+RETURN gds.util.asNode(nodeId).name AS name, score
+ORDER BY score DESC</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="tutorial-block">
+                        <h3>算法选择指南</h3>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>应用场景</th>
+                                    <th>推荐算法</th>
+                                    <th>GDS 函数</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>识别关键人物/节点</td>
+                                    <td>PageRank, Betweenness</td>
+                                    <td>gds.pageRank, gds.betweenness</td>
+                                </tr>
+                                <tr>
+                                    <td>用户分群/社区发现</td>
+                                    <td>Louvain, Label Propagation</td>
+                                    <td>gds.louvain, gds.labelPropagation</td>
+                                </tr>
+                                <tr>
+                                    <td>好友/商品推荐</td>
+                                    <td>Link Prediction, Node2Vec</td>
+                                    <td>gds.linkPrediction, gds.node2vec</td>
+                                </tr>
+                                <tr>
+                                    <td>路径规划/导航</td>
+                                    <td>Shortest Path, A*</td>
+                                    <td>gds.shortestPath.dijkstra</td>
+                                </tr>
+                                <tr>
+                                    <td>相似用户/物品</td>
+                                    <td>Jaccard, Cosine, Node Similarity</td>
+                                    <td>gds.nodeSimilarity</td>
+                                </tr>
+                                <tr>
+                                    <td>特征学习/嵌入</td>
+                                    <td>FastRP, GraphSAGE</td>
+                                    <td>gds.fastRP, gds.graphSage</td>
+                                </tr>
+                                <tr>
+                                    <td>分类/预测</td>
+                                    <td>GNN, GraphSAGE</td>
+                                    <td>gds.graphSage.train</td>
+                                </tr>
+                                <tr>
+                                    <td>欺诈检测</td>
+                                    <td>Community Detection + Anomaly</td>
+                                    <td>gds.louvain + gds.beta.anomaly</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
